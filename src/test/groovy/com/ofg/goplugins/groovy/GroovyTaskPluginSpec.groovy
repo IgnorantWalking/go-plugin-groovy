@@ -86,7 +86,7 @@ class GroovyTaskPluginSpec extends Specification {
         JsonBuilder json = new JsonBuilder()
         json {
             config {
-                Script {
+                script {
                     value script
                 }
             }

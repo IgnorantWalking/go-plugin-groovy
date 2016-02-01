@@ -73,7 +73,7 @@ class GroovyTaskPlugin extends AbstractGoPlugin {
             bindings['fail'] = new MethodClosure(new TerminationUtil(), 'fail')
         }
 
-        engine.eval(message.config.Script.value)
+        engine.eval(message.config.script.value)
     }
 
     private static void logFailureMessageOnly(Exception e) {
@@ -87,22 +87,25 @@ class GroovyTaskPlugin extends AbstractGoPlugin {
     }
 
     private static GoPluginApiResponse handleConfiguration() {
-        return response(Script: [required: true])
+        return response(script: ["display-name": "Script", "default-value": "", required: true, secure: false, "display-order": "0"])		
     }
+	
 
     private static GoPluginApiResponse handleView() {
         String baseUrl = GroovyTaskPlugin.protectionDomain.codeSource.location.toExternalForm()
-        return response(displayValue: 'Groovy',
-                        template: new URL(baseUrl + '/task.template.html').text)
+        return response('displayValue': 'Groovy',
+                        'template': new URL(baseUrl + '/task.template.html').getText("UTF-8"))
     }
 
     private static GoPluginApiResponse handleValidation(GoPluginApiRequest request) {
         def validation = [:]
 
         def message = new ObjectMapper().readValue(request.requestBody(), Map)
-        if (!message.Script?.value || message.Script.value.allWhitespace) {
+		println("request: " + request)
+		println("message: " + message)
+        if (!message.script?.value || message.script.value.allWhitespace) {
             validation['errors'] = [
-                    Script: 'Script cannot be empty'
+                    script: 'Script cannot be empty'
             ]
         }
 
